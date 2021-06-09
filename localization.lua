@@ -53,10 +53,13 @@ local L = addon_data.localization_table
     L["Allows the cast bar to show Multi-Shot casts."]="Allows the cast bar to show Multi-Shot casts."
     L["Latency bar"]=" Latency bar"
     L["Shows a bar that represents latency on cast bar."]="Shows a bar that represents latency on cast bar."
+    L["Steady Shot clip bar"]=" Steady Shot clip bar"
+    L["Shows a bar that represents when a Steady Shot would clip an Auto Shot."]="Shows a bar that represents when a Steady Shot would clip an Auto Shot."
     L["Multi-Shot clip bar"]=" Multi-Shot clip bar"
     L["Shows a bar that represents when a Multi-Shot would clip an Auto Shot."]="Shows a bar that represents when a Multi-Shot would clip an Auto Shot."
 	L["Auto Shot delay timer"] = " Auto Shot delay timer"
 	L["Shows a timer that represents when Auto shot is delayed."] = "Shows a timer that represents when Auto shot is delayed."
+    L["Steady Shot Clip Color"]="Steady Shot Clip Color"
     L["Multi-Shot Clip Color"]="Multi-Shot Clip Color"
 
     --Common
@@ -185,10 +188,13 @@ if GetLocale() == "zhCN" then
     L["Allows the cast bar to show Multi-Shot casts."]="允许显示多重射击条。"
     L["Latency bar"]=" 延迟条"
     L["Shows a bar that represents latency on cast bar."]="允许显示延迟条。"
+    L["Steady Shot clip bar"]=" Steady Shot clip bar"
+    L["Shows a bar that represents when a Steady Shot would clip an Auto Shot."]="Shows a bar that represents when a Steady Shot would clip an Auto Shot."
     L["Multi-Shot clip bar"]=" 多重射击覆盖区间"
 	L["Shows a bar that represents when a Multi-Shot would clip an Auto Shot."]="允许显示多重射击覆盖区间。"
 	L["Auto Shot delay timer"] = " 自动射击延时器"
 	L["Shows a timer that represents when Auto shot is delayed."] = "为自动射击延时显示一个计时器。"
+    L["Steady Shot Clip Color"]="Steady Shot Clip Color"
     L["Multi-Shot Clip Color"]="多重射击覆盖区间颜色"
 	
     --Common
@@ -279,10 +285,13 @@ if GetLocale() == "zhTW" then -- 供中国香港、中国澳门和中国台湾�
     	L["Allows the cast bar to show Multi-Shot casts."]="允許顯示多重射擊條。"
     	L["Latency bar"]=" 延遲條"
     	L["Shows a bar that represents latency on cast bar."]="允許顯示延遲條。"
+    L["Steady Shot clip bar"]=" Steady Shot clip bar"
+    L["Shows a bar that represents when a Steady Shot would clip an Auto Shot."]="Shows a bar that represents when a Steady Shot would clip an Auto Shot."
     	L["Multi-Shot clip bar"]=" 多重射擊覆蓋區間"
 	L["Shows a bar that represents when a Multi-Shot would clip an Auto Shot."]="允許顯示多重射擊覆蓋區間。"
 	L["Auto Shot delay timer"] = " 自動射擊延時器"
 	L["Shows a timer that represents when Auto shot is delayed."] = "為自動射擊延時顯示一個計時器。"
+    L["Steady Shot Clip Color"]="Steady Shot Clip Color"
     	L["Multi-Shot Clip Color"]="多重射擊覆蓋區間顏色"
 	
     	--Common
