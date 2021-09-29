@@ -592,7 +592,7 @@ addon_data.castbar.CreateConfigPanel = function(parent_panel)
 		L["Show Cast Text"],
         L["Enables the cast bar text."],
         addon_data.castbar.ShowCastTextCheckBoxOnClick)
-    panel.show_casttext_checkbox:SetPoint("TOPLEFT", 10, -85)
+    panel.show_casttext_checkbox:SetPoint("TOPLEFT", 10, -105)
     
     -- Width EditBox
     panel.width_editbox = addon_data.config.EditBoxFactory(
@@ -678,7 +678,7 @@ addon_data.castbar.CreateConfigPanel = function(parent_panel)
         L["Multi-Shot cast bar"],
         L["Allows the cast bar to show Multi-Shot casts."],
         addon_data.castbar.ShowMultiShotCastBarCheckBoxOnClick)
-    panel.show_multishot_cast_bar_checkbox:SetPoint("TOPLEFT", 10, -45)
+    panel.show_multishot_cast_bar_checkbox:SetPoint("TOPLEFT", 10, -65)
     
     -- Show Latency Bar Checkbox
     panel.show_latency_bar_checkbox = addon_data.config.CheckBoxFactory(
@@ -687,7 +687,7 @@ addon_data.castbar.CreateConfigPanel = function(parent_panel)
         L["Latency bar"],
         L["Shows a bar that represents latency on cast bar."],
         addon_data.castbar.ShowLatencyBarsCheckBoxOnClick)
-    panel.show_latency_bar_checkbox:SetPoint("TOPLEFT", 10, -65)
+    panel.show_latency_bar_checkbox:SetPoint("TOPLEFT", 10, -85)
     
     -- Return the final panel
     addon_data.castbar.UpdateConfigPanelValues()

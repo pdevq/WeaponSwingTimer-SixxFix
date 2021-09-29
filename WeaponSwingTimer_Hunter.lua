@@ -66,6 +66,7 @@ addon_data.hunter.default_settings = {
 	backplane_alpha = 0.5,
 	is_locked = false,
     show_text = true,
+    show_steady_clip_bar = true,
     show_multishot_clip_bar = true,
 	show_autoshot_delay_timer = true,
     show_border = false,
@@ -73,7 +74,8 @@ addon_data.hunter.default_settings = {
     one_bar = false,
     cooldown_r = 0.95, cooldown_g = 0.95, cooldown_b = 0.95, cooldown_a = 1.0,
     auto_cast_r = 0.8, auto_cast_g = 0.0, auto_cast_b = 0.0, auto_cast_a = 1.0,
-    clip_r = 1.0, clip_g = 0.0, clip_b = 0.0, clip_a = 0.7
+    clip_r = 1.0, clip_g = 0.0, clip_b = 0.0, clip_a = 0.7,
+    steady_clip_r = 1.0, steady_clip_g = 0.50, steady_clip_b = 0.0, steady_clip_a = 0.7
 }
 --- Initializing variables for calculations and function calls
 addon_data.hunter.shooting = false
@@ -414,6 +416,7 @@ addon_data.hunter.UpdateVisualsOnUpdate = function()
     local shot_timer = addon_data.hunter.shot_timer
     local auto_cast_time = addon_data.hunter.auto_cast_time
 	local mult_cast_time = 0.5 * addon_data.hunter.range_cast_speed_modifer
+    local steady_cast_time = 1.5 * addon_data.hunter.range_cast_speed_modifer
 	
 	if settings.enabled then
         frame.shot_bar_text:SetText(tostring(addon_data.utils.SimpleRound(shot_timer, 0.1)))
@@ -426,6 +429,7 @@ addon_data.hunter.UpdateVisualsOnUpdate = function()
             if addon_data.hunter.auto_shot_ready then
                 frame.shot_bar:SetVertexColor(settings.auto_cast_r, settings.auto_cast_g, settings.auto_cast_b, settings.auto_cast_a)
                 new_width = settings.width * (auto_cast_time - shot_timer) / auto_cast_time
+                frame.steady_clip_bar:Hide()
                 frame.multishot_clip_bar:Hide()
             else
                 if addon_data.hunter.spell_GCD > 0.5 then
@@ -434,6 +438,11 @@ addon_data.hunter.UpdateVisualsOnUpdate = function()
 					frame.shot_bar:SetVertexColor(settings.cooldown_r, settings.cooldown_g, settings.cooldown_b, settings.cooldown_a)
 				end
                 new_width = settings.width * ((shot_timer - auto_cast_time) / (range_speed - auto_cast_time))
+                if settings.show_steady_clip_bar then
+                    frame.steady_clip_bar:Show()
+                    steady_clip_width = math.min(settings.width * (steady_cast_time / (range_speed - auto_cast_time)), settings.width)
+                    frame.steady_clip_bar:SetWidth(steady_clip_width)
+                end                
                 if settings.show_multishot_clip_bar then
                     frame.multishot_clip_bar:Show()
                     multishot_clip_width = math.min((settings.width * 2) * (mult_cast_time / (addon_data.hunter.range_speed)), settings.width)
@@ -455,6 +464,13 @@ addon_data.hunter.UpdateVisualsOnUpdate = function()
                 auto_shot_cast_width = settings.width * (addon_data.hunter.shot_timer / addon_data.hunter.range_speed)
             else
                 auto_shot_cast_width = settings.width * (addon_data.hunter.auto_cast_time / addon_data.hunter.range_speed)
+            end
+            if settings.show_steady_clip_bar then
+                frame.steady_clip_bar:Show()
+                steady_clip_width = math.min(settings.width * (steady_cast_time / range_speed ), settings.width)
+                frame.steady_clip_bar:SetWidth(5)
+                steady_offset = (settings.width * (addon_data.hunter.auto_cast_time / addon_data.hunter.range_speed)) + steady_clip_width
+                frame.steady_clip_bar:SetPoint('BOTTOMRIGHT', -steady_offset, 0)
             end
             if settings.show_multishot_clip_bar then
                 frame.multishot_clip_bar:Show()
@@ -515,6 +531,15 @@ addon_data.hunter.UpdateVisualsOnSettingsChange = function()
             frame.shot_bar:SetTexture('Interface/AddOns/WeaponSwingTimer/Images/Background')
             frame.auto_shot_cast_bar:SetTexture('Interface/AddOns/WeaponSwingTimer/Images/Background')
         end
+        frame.steady_clip_bar:ClearAllPoints()
+        if not settings.one_bar then
+            frame.steady_clip_bar:SetPoint("BOTTOM", 0, 0)
+        else
+            frame.steady_clip_bar:SetPoint("BOTTOMRIGHT", 0, 0)
+        end
+        frame.steady_clip_bar:SetHeight(settings.height)
+        frame.steady_clip_bar:SetColorTexture(settings.steady_clip_r, settings.steady_clip_g, settings.steady_clip_b, settings.steady_clip_a)
+        
         frame.multishot_clip_bar:ClearAllPoints()
         if not settings.one_bar then
             frame.multishot_clip_bar:SetPoint("BOTTOM", 0, 0)
@@ -524,6 +549,11 @@ addon_data.hunter.UpdateVisualsOnSettingsChange = function()
         frame.multishot_clip_bar:SetHeight(settings.height)
         frame.multishot_clip_bar:SetColorTexture(settings.clip_r, settings.clip_g, settings.clip_b, settings.clip_a)
 		
+        if settings.show_steady_clip_bar then
+            frame.steady_clip_bar:Show()
+        else
+            frame.steady_clip_bar:Hide()
+        end
         if settings.show_multishot_clip_bar then
             frame.multishot_clip_bar:Show()
         else
@@ -584,6 +614,8 @@ addon_data.hunter.InitializeVisuals = function()
     frame.shot_bar_text:SetFont("Fonts/FRIZQT__.ttf", settings.fontsize)
     frame.shot_bar_text:SetJustifyV("CENTER")
     frame.shot_bar_text:SetJustifyH("CENTER")
+    -- Create the steayshot clip bar
+    frame.steady_clip_bar = frame:CreateTexture(nil,"OVERLAY")
     -- Create the multishot clip bar
     frame.multishot_clip_bar = frame:CreateTexture(nil,"OVERLAY")
     -- Create the auto shot cast bar indicator
@@ -607,6 +639,7 @@ addon_data.hunter.UpdateConfigPanelValues = function()
     local panel = addon_data.hunter.config_frame
     local settings = character_hunter_settings
     panel.enabled_checkbox:SetChecked(settings.enabled)
+    panel.show_steady_clip_bar_checkbox:SetChecked(settings.show_steady_clip_bar)
     panel.show_multishot_clip_bar_checkbox:SetChecked(settings.show_multishot_clip_bar)
 	panel.show_autoshot_delay_checkbox:SetChecked(settings.show_autoshot_delay_timer)
     panel.show_border_checkbox:SetChecked(settings.show_border)
@@ -627,6 +660,8 @@ addon_data.hunter.UpdateConfigPanelValues = function()
         settings.cooldown_r, settings.cooldown_g, settings.cooldown_b, settings.cooldown_a)
     panel.autoshot_cast_color_picker.foreground:SetColorTexture(
         settings.auto_cast_r, settings.auto_cast_g, settings.auto_cast_b, settings.auto_cast_a)
+    panel.steady_clip_color_picker.foreground:SetColorTexture(
+        settings.steady_clip_r, settings.steady_clip_g, settings.steady_clip_b, settings.steady_clip_a)
     panel.multi_clip_color_picker.foreground:SetColorTexture(
         settings.clip_r, settings.clip_g, settings.clip_b, settings.clip_a)
         
@@ -649,6 +684,11 @@ end
 
 addon_data.hunter.EnabledCheckBoxOnClick = function(self)
     character_hunter_settings.enabled = self:GetChecked()
+    addon_data.hunter.UpdateVisualsOnSettingsChange()
+end
+
+addon_data.hunter.ShowSteadyShotClipBarCheckBoxOnClick = function(self)
+   character_hunter_settings.show_steady_clip_bar = self:GetChecked()
     addon_data.hunter.UpdateVisualsOnSettingsChange()
 end
 
@@ -753,6 +793,30 @@ addon_data.hunter.AutoShotCastColorPickerOnClick = function()
     ColorPickerFrame.opacity = 1 - settings.auto_cast_a
     ColorPickerFrame:SetColorRGB(settings.auto_cast_r, settings.auto_cast_g, settings.auto_cast_b)
     ColorPickerFrame.previousValues = {settings.auto_cast_r, settings.auto_cast_g, settings.auto_cast_b, settings.auto_cast_a}
+    ColorPickerFrame:Show()
+end
+
+addon_data.hunter.SteadyClipColorPickerOnClick = function()
+    local settings = character_hunter_settings
+    local function SteadyClipOnActionFunc(restore)
+        local settings = character_hunter_settings
+        local new_r, new_g, new_b, new_a
+        if restore then
+            new_r, new_g, new_b, new_a = unpack(restore)
+        else
+            new_a, new_r, new_g, new_b = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
+    end
+    settings.steady_clip_r, settings.steady_clip_g, settings.steady_clip_b, settings.steady_clip_a = new_r, new_g, new_b, new_a
+    addon_data.hunter.frame.steady_clip_bar:SetColorTexture(settings.steady_clip_r, settings.steady_clip_g, settings.steady_clip_b, settings.steady_clip_a)
+    addon_data.hunter.config_frame.steady_clip_color_picker.foreground:SetColorTexture(
+        settings.steady_clip_r, settings.steady_clip_g, settings.steady_clip_b, settings.steady_clip_a)
+    end
+    ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = 
+        SteadyClipOnActionFunc, SteadyClipOnActionFunc, SteadyClipOnActionFunc
+    ColorPickerFrame.hasOpacity = true 
+    ColorPickerFrame.opacity = 1 - settings.steady_clip_a
+    ColorPickerFrame:SetColorRGB(settings.steady_clip_r, settings.steady_clip_g, settings.steady_clip_b)
+    ColorPickerFrame.previousValues = {settings.steady_clip_r, settings.steady_clip_g, settings.steady_clip_b, settings.steady_clip_a}
     ColorPickerFrame:Show()
 end
 
@@ -955,6 +1019,15 @@ addon_data.hunter.CreateConfigPanel = function(parent_panel)
     panel.hunter_text:SetTextColor(1, 0.9, 0, 1)
 
     -- Show Multi-Shot Clip Bar Checkbox
+    panel.show_steady_clip_bar_checkbox = addon_data.config.CheckBoxFactory(
+        "HunterShowSteadyShotClipBarCheckBox",
+        panel,
+        L["Steady Shot clip bar"],
+        L["Shows a bar that represents when a Steady Shot would clip an Auto Shot."],
+        addon_data.hunter.ShowSteadyShotClipBarCheckBoxOnClick)
+    panel.show_steady_clip_bar_checkbox:SetPoint("TOPLEFT", 10, -240)
+
+    -- Show Multi-Shot Clip Bar Checkbox
     panel.show_multishot_clip_bar_checkbox = addon_data.config.CheckBoxFactory(
         "HunterShowMultiShotClipBarCheckBox",
         panel,
@@ -970,7 +1043,16 @@ addon_data.hunter.CreateConfigPanel = function(parent_panel)
         L["Auto Shot delay timer"],
         L["Shows a timer that represents when Auto shot is delayed."],
         addon_data.hunter.ShowAutoShotDelayCheckBoxOnClick)
-    panel.show_autoshot_delay_checkbox:SetPoint("TOPLEFT", 10, -240)
+    panel.show_autoshot_delay_checkbox:SetPoint("TOPLEFT", 10, -260)
+    
+    -- Steady Shot clip color picker
+    panel.steady_clip_color_picker = addon_data.config.color_picker_factory(
+        'HunterSteadyClipColorPicker',
+        panel,
+        settings.clip_r, settings.clip_g, settings.clip_b, settings.clip_a,
+        L["Steady Shot Clip Color"],
+        addon_data.hunter.SteadyClipColorPickerOnClick)
+    panel.steady_clip_color_picker:SetPoint('TOPLEFT', 205, -260)
     
     -- Multi-shot clip color picker
     panel.multi_clip_color_picker = addon_data.config.color_picker_factory(
