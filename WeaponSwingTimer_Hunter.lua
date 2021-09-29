@@ -436,7 +436,7 @@ addon_data.hunter.UpdateVisualsOnUpdate = function()
                 new_width = settings.width * ((shot_timer - auto_cast_time) / (range_speed - auto_cast_time))
                 if settings.show_steady_clip_bar then
                     frame.steady_clip_bar:Show()
-                    steady_clip_width = math.min((settings.width) * (steady_cast_time / (addon_data.hunter.range_speed)), settings.width)
+                    steady_clip_width = math.min(settings.width * (steady_cast_time / (range_speed - auto_cast_time)), settings.width)
                     frame.steady_clip_bar:SetWidth(steady_clip_width)
                 end                
                 if settings.show_multishot_clip_bar then
